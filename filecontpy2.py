@@ -91,24 +91,23 @@ def compardirs(path1,path2):#对比文件夹内容
     file1m = len(files1_list)
     file2m = len(files2_list)
     for name1 in files1_list:#files:
-        for name2 in files2_list:
-            if name1 == name2 :
+        # for name2 in files2_list:
+        #     if name1 == name2 :
             # if get_equal_rate(name1,name2) > 0.9:#判断如果两个文件名称相似度大于0.9判定为文件名称相同
-                file1 = os.path.join(path1, name1)
-                file2 = os.path.join(path2, name2)
-                result,filetp,filecont,filesize = comparfile(file1,file2)
-                if result == 'true':#如果对比结果一致则返回'true'
-                    finresult = 'true'
-                else:
-                    diff.append(name1)
-                if filetp == 'false':
-                    file_tp += 1
-                if filecont == 'false':
-                    file_cont += 1
-                if filesize == 'false':
-                    file_size += 1
+        file1 = os.path.join(path1, name1)
+        file2 = os.path.join(path2, name1)
+        if os.path.exists(file1) and os.path.exists(file2):
+            result,filetp,filecont,filesize = comparfile(file1,file2)
+            if result == 'true':#如果对比结果一致则返回'true'
+                finresult = 'true'
             else:
+                diff.append(name1)
+            if filetp == 'false':
+                file_tp += 1
+            if filecont == 'false':
                 file_cont += 1
+            if filesize == 'false':
+                file_size += 1
     if abs(file1m-file2m) > diffdirs:
         finresult = 'false'
         return finresult,diff
@@ -123,7 +122,6 @@ def compardirs(path1,path2):#对比文件夹内容
         return finresult,diff
     return finresult,diff
 def compardirs2(path1,path2,diff):
-    print diff
     for name in diff:
         file1 = os.path.join(path1,name)
         file2 = os.path.join(path2,name)
