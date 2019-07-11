@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*
-import hashlib,os,subprocess,difflib,argparse,commands
+import hashlib,os,difflib,argparse,commands
 def get_equal_rate(str1, str2):
    return difflib.SequenceMatcher(None, str1, str2).quick_ratio()
 def un_compress(file):#识别压缩包类型并解压，可能不用
@@ -107,8 +107,9 @@ def compardirs(path1,path2):#对比文件夹内容
                     file_cont += 1
                 if filesize == 'false':
                     file_size += 1
+            else:
+                file_cont += 1
     if abs(file1m-file2m) > diffdirs:
-        # print('文件夹内文件数量差距过多')
         finresult = 'false'
         return finresult,diff
     if file_tp > difftp:
@@ -135,32 +136,24 @@ def compardirs2(path1,path2,diff):
 def final_result(file1,file2):
     file1path = un_compress(file1)  # filepath是解压后文件所在目录
     file2path = un_compress(file2)
-    # print file1path
-    # print file2path
     result, diff = compardirs(file1path, file2path)
     if result == 'true':
-        # return True
-        print True
-        print('对比结果：结果无差异')
+        return True
     else:
-        # return False
-        # print False
         result2 = compardirs2(file1path, file2path, diff)
         if result2 =='true':
-            print True
-            print('对比结果：差异在允许范围内')
+            return True
         else:
-            print False
-            print('对比结果：结果有差异！请查看！！！')
-def Main(file1,file2):#,book_name_xls):
-# def Main():
-#     parser = argparse.ArgumentParser()
-#     parser.add_argument("file1")
-#     parser.add_argument("file2")
-#     args = parser.parse_args()
-#     file1 = args.file1
-#     file2 = args.file2
-    print('正在对比文件...')
+            return False
+# def Main(file1,file2):#,book_name_xls):
+def Main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("file1")
+    parser.add_argument("file2")
+    args = parser.parse_args()
+    file1 = args.file1
+    file2 = args.file2
+    # print('正在对比文件...')
     if os.path.exists(file1) and os.path.exists(file2):
         size1 = os.path.getsize(file1)#filesize(file1)#文件1的大小
         size2 = os.path.getsize(file2)#filesize(file2)#文件2的大小
@@ -168,8 +161,7 @@ def Main(file1,file2):#,book_name_xls):
             m1 = getMd5(file1)
             m2 = getMd5(file2)
             if m1 == m2:
-                print('对比结果：压缩包文件无差异')
-                return
+                return True
             else:
                 final_result(file1, file2)
         else:
@@ -177,5 +169,5 @@ def Main(file1,file2):#,book_name_xls):
     else:
         print('文件不存在，请重新输入')
 if __name__=='__main__':
-    # Main()
-    Main(input('文件1:'),input('文件2:'))
+    Main()
+    # Main(input('文件1:'),input('文件2:'))
