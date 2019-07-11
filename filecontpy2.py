@@ -22,7 +22,7 @@ def un_compress(file):#识别压缩包类型并解压，可能不用
         else:
             print('未知文件类型')
         dirname = path + '/' + dirnm[1].split('/')[0]
-        print dirname
+        # print dirname
         return dirname
 def fileguess(File):#获取文件类型
     if os.path.exists(File):
@@ -91,29 +91,22 @@ def compardirs(path1,path2):#对比文件夹内容
     file1m = len(files1_list)
     file2m = len(files2_list)
     for name1 in files1_list:#files:
-        # if os.path.isfile(name1) :
-            for name2 in files2_list:
-                # if os.path.isfile(name2) :
-                    if get_equal_rate(name1,name2) > 0.9:#判断如果两个文件名称相似度大于0.9判定为文件名称相同
-                        file1 = os.path.join(path1, name1)
-                        file2 = os.path.join(path2, name2)
-                        # print file1
-                        # print file2
-                        result,filetp,filecont,filesize = comparfile(file1,file2)
-                        if result == 'true':#如果对比结果一致则返回'true'
-                            finresult = 'true'
-                        else:
-                            diff.append(name1)
-                        if filetp == 'false':
-                            file_tp += 1
-                        if filecont == 'false':
-                            file_cont += 1
-                        if filesize == 'false':
-                            file_size += 1
-                # else:
-                #     print name2
-        # else:
-        #     print name1
+        for name2 in files2_list:
+            if name1 == name2 :
+            # if get_equal_rate(name1,name2) > 0.9:#判断如果两个文件名称相似度大于0.9判定为文件名称相同
+                file1 = os.path.join(path1, name1)
+                file2 = os.path.join(path2, name2)
+                result,filetp,filecont,filesize = comparfile(file1,file2)
+                if result == 'true':#如果对比结果一致则返回'true'
+                    finresult = 'true'
+                else:
+                    diff.append(name1)
+                if filetp == 'false':
+                    file_tp += 1
+                if filecont == 'false':
+                    file_cont += 1
+                if filesize == 'false':
+                    file_size += 1
     if abs(file1m-file2m) > diffdirs:
         # print('文件夹内文件数量差距过多')
         finresult = 'false'
@@ -129,12 +122,16 @@ def compardirs(path1,path2):#对比文件夹内容
         return finresult,diff
     return finresult,diff
 def compardirs2(path1,path2,diff):
+    print diff
     for name in diff:
         file1 = os.path.join(path1,name)
         file2 = os.path.join(path2,name)
         file1path = un_compress(file1)  # filepath是解压后文件所在目录
         file2path = un_compress(file2)
-        compardirs(file1path, file2path)
+        print file1path
+        print file2path
+        result,dif= compardirs(file1path, file2path)
+        return result
 def final_result(file1,file2):
     file1path = un_compress(file1)  # filepath是解压后文件所在目录
     file2path = un_compress(file2)
@@ -147,9 +144,14 @@ def final_result(file1,file2):
         print('对比结果：结果无差异')
     else:
         # return False
-        print False
-        # compardirs2(file1path, file2path, diff)
-        print('对比结果：结果有差异！请查看！！！')
+        # print False
+        result2 = compardirs2(file1path, file2path, diff)
+        if result2 =='true':
+            print True
+            print('对比结果：差异在允许范围内')
+        else:
+            print False
+            print('对比结果：结果有差异！请查看！！！')
 def Main(file1,file2):#,book_name_xls):
 # def Main():
 #     parser = argparse.ArgumentParser()
