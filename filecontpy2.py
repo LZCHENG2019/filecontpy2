@@ -1,28 +1,19 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*
-import hashlib,os,difflib,argparse,commands
-def get_equal_rate(str1, str2):
-   return difflib.SequenceMatcher(None, str1, str2).quick_ratio()
+import hashlib,os,argparse,commands#difflib
 def un_compress(file):#识别压缩包类型并解压，可能不用
     if os.path.exists(file):
         kind = fileguess(file)#filetype.guess(file)
         path = os.path.split(file)[0]#获取文件路径，例：/root/demo
         if kind == 'XZ compressed data':#.xz文件解压
             dirnm = commands.getstatusoutput("tar Jxvf %s -C %s | xargs awk 'BEGIN{print ARGV[1]}'" % (file, path))
-            # print dirnm
-            # print('%s 解压完成' %file)
         elif kind == 'POSIX tar archive (GNU)':#tar包解压
             dirnm = commands.getstatusoutput("tar xvf %s -C %s | xargs awk 'BEGIN{print ARGV[1]}'" %(file,path))
-            # print dirnm
-            # print('%s 解压完成' % file)
         elif kind == 'gzip compressed data':#.gz文件解压
             dirnm = commands.getstatusoutput("tar zxvf %s -C %s | xargs awk 'BEGIN{print ARGV[1]}'" % (file, path))
-            # print dirnm
-            # print('%s 解压完成' % file)
         else:
             print('未知文件类型')
         dirname = path + '/' + dirnm[1].split('/')[0]
-        # print dirname
         return dirname
 def fileguess(File):#获取文件类型
     if os.path.exists(File):
@@ -39,10 +30,10 @@ def getMd5(file1):#获取MD5值
         str = f.read()
         m.update(str)
         return m.hexdigest()
-    else:
-        m = file1
-        print(file1 + '文件错误或不存在')
-        return m
+    # else:
+    #     m = file1
+    #     print(file1 + '文件错误或不存在')
+    #     return m
 def comparfile(file1,file2):#对比文件
     filetp = 'true'
     filecont = 'true'
@@ -91,9 +82,6 @@ def compardirs(path1,path2):#对比文件夹内容
     file1m = len(files1_list)
     file2m = len(files2_list)
     for name1 in files1_list:#files:
-        # for name2 in files2_list:
-        #     if name1 == name2 :
-            # if get_equal_rate(name1,name2) > 0.9:#判断如果两个文件名称相似度大于0.9判定为文件名称相同
         file1 = os.path.join(path1, name1)
         file2 = os.path.join(path2, name1)
         if os.path.exists(file1) and os.path.exists(file2):
@@ -127,8 +115,6 @@ def compardirs2(path1,path2,diff):
         file2 = os.path.join(path2,name)
         file1path = un_compress(file1)  # filepath是解压后文件所在目录
         file2path = un_compress(file2)
-        print file1path
-        print file2path
         result,dif= compardirs(file1path, file2path)
         return result
 def final_result(file1,file2):
@@ -136,14 +122,13 @@ def final_result(file1,file2):
     file2path = un_compress(file2)
     result, diff = compardirs(file1path, file2path)
     if result == 'true':
-        return True
+        print True
     else:
         result2 = compardirs2(file1path, file2path, diff)
         if result2 =='true':
-            return True
+            print True
         else:
-            return False
-# def Main(file1,file2):#,book_name_xls):
+            print False
 def Main():
     parser = argparse.ArgumentParser()
     parser.add_argument("file1")
@@ -151,7 +136,6 @@ def Main():
     args = parser.parse_args()
     file1 = args.file1
     file2 = args.file2
-    # print('正在对比文件...')
     if os.path.exists(file1) and os.path.exists(file2):
         size1 = os.path.getsize(file1)#filesize(file1)#文件1的大小
         size2 = os.path.getsize(file2)#filesize(file2)#文件2的大小
@@ -159,7 +143,7 @@ def Main():
             m1 = getMd5(file1)
             m2 = getMd5(file2)
             if m1 == m2:
-                return True
+                print True
             else:
                 final_result(file1, file2)
         else:
@@ -168,4 +152,3 @@ def Main():
         print('文件不存在，请重新输入')
 if __name__=='__main__':
     Main()
-    # Main(input('文件1:'),input('文件2:'))
