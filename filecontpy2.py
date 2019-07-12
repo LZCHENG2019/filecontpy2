@@ -96,6 +96,7 @@ def compardirs(path1,path2):#对比文件夹内容
                 file_cont += 1
             if filesize == 'false':
                 file_size += 1
+
     if abs(file1m-file2m) > diffdirs:
         finresult = 'false'
         return finresult,diff
@@ -129,6 +130,7 @@ def final_result(file1,file2):
             print True
         else:
             print False
+    os.system('\\rm -r %s %s'%(file1path,file2path))
 def Main():
     parser = argparse.ArgumentParser()
     parser.add_argument("file1")
