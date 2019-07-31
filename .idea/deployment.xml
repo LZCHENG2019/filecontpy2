@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="PublishConfigData" autoUpload="Always" serverName="Copy of project-level server '10'">
+  <component name="PublishConfigData" autoUpload="Always" serverName="Copy of project-level server '10.2.19.26'">
     <serverData>
-      <paths name="10">
+      <paths name="10.2.19.26">
         <serverdata>
           <mappings>
-            <mapping deploy="/root/filecont" local="$PROJECT_DIR$" web="/" />
+            <mapping deploy="/root/pycharm" local="$PROJECT_DIR$" web="/" />
           </mappings>
         </serverdata>
       </paths>
-      <paths name="Copy of project-level server '10'">
+      <paths name="Copy of project-level server '10.2.19.26'">
         <serverdata>
           <mappings>
-            <mapping deploy="/root/filecont" local="$PROJECT_DIR$" />
+            <mapping deploy="/tmp/pycharm_project_61" local="$PROJECT_DIR$" />
           </mappings>
         </serverdata>
       </paths>

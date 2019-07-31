@@ -1,7 +1,30 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*
-import hashlib,os,argparse,commands#difflib
-def un_compress(file):#识别压缩包类型并解压，可能不用
+import hashlib,os,commands,sys#difflib,argparse,
+#获得分支名字
+def findfenzhi(filename):
+    fenzhi = filename[0:(len(filename)-40)]
+    b=0
+    for i in range(len(fenzhi)):
+        if fenzhi[i] == '-':
+            b=b+1
+        if b==3:
+            return fenzhi[(i+1):len(fenzhi)]
+            break
+#判断后缀名是大包小包
+# def model(file):
+#     return os.path.splitext(file)[1]
+#存储大包模板，key为模板的分支名，value为模板的路径
+def bighashmap(fenzhi):
+    dictbig = {'feature_XSTOR1000-Epic-2018-04': '/root/demo/demo/demo/list1tar.tar',
+               'feature_ofs3.0_lastdebug': '/root/demo/list1tar.tar'}
+    return dictbig[fenzhi]
+#存储小包模板，key为模板的分支名，value为模板的路径
+def smallhashmap(fenzhi):
+    dictsmall = {'Name': 'Zara', 'Age': 7, 'Class': 'First'}
+    return dictsmall[fenzhi]
+
+def un_compress(file):#识别压缩包类型并解压
     if os.path.exists(file):
         kind = fileguess(file)#filetype.guess(file)
         path = os.path.split(file)[0]#获取文件路径，例：/root/demo
@@ -107,6 +130,7 @@ def compardirs(path1,path2):#对比文件夹内容
         finresult = 'false'
         return finresult,diff
     if file_size > diffsize:
+
         finresult = 'false'
         return finresult,diff
     return finresult,diff
@@ -123,21 +147,25 @@ def final_result(file1,file2):
     file2path = un_compress(file2)
     result, diff = compardirs(file1path, file2path)
     if result == 'true':
-        print True
+        Result = True
+        # os.system('\\rm -r %s %s' % (file1path, file2path))
+        # return True
+        # print True
     else:
         result2 = compardirs2(file1path, file2path, diff)
         if result2 =='true':
-            print True
+            Result = True
+            # os.system('\\rm -r %s %s' % (file1path, file2path))
+            # return True
+            # print True
         else:
-            print False
+            Result = False
+            # os.system('\\rm -r %s %s' % (file1path, file2path))
+            # return False
+            # print False
     os.system('\\rm -r %s %s'%(file1path,file2path))
-def Main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument("file1")
-    parser.add_argument("file2")
-    args = parser.parse_args()
-    file1 = args.file1
-    file2 = args.file2
+    return Result
+def main1(file1,file2):
     if os.path.exists(file1) and os.path.exists(file2):
         size1 = os.path.getsize(file1)#filesize(file1)#文件1的大小
         size2 = os.path.getsize(file2)#filesize(file2)#文件2的大小
@@ -145,12 +173,50 @@ def Main():
             m1 = getMd5(file1)
             m2 = getMd5(file2)
             if m1 == m2:
-                print True
+                return True
+                # print True
             else:
-                final_result(file1, file2)
+                return final_result(file1, file2)
         else:
-            final_result(file1, file2)
-    else:
-        print('文件不存在，请重新输入')
+            return final_result(file1, file2)
+            # print 'exist'
+    # else:
+    #     a='文件不存在，请重新输入'
+    #     return a
+def Main():
+    File = sys.argv[1] #运行python时传入参数
+    filename = os.path.basename(File)
+    class Networkerror(RuntimeError):
+        def __init__(self, arg):
+            self.args = arg
+    try:
+        if fileguess(File) == 'POSIX tar archive (GNU)':
+            #判断文件类型是否为Tar包
+            modelfile = bighashmap(findfenzhi(filename))
+        else:
+            modelfile = smallhashmap(findfenzhi(filename))
+        # if model(File) == '.tar':
+        #     modelpath = bighashmap(findfenzhi(filename))
+        # else:
+        #     modelpath = smallhashmap(findfenzhi(filename))
+
+        # process = os.popen('python /root/test/filecontpy2.py %s %s' % (modelpath, path))
+        # output = process.read().rstrip()
+        # process.close
+        output = main1(modelfile,File)
+        print output
+        if (output == True):
+
+            print '允许拷贝！'
+        if (output == False):
+            print '差别过大，不可拷贝！'
+    except KeyError,e:
+        print '输入模板不存在或模板不存在'
+    # parser = argparse.ArgumentParser()
+    # parser.add_argument("file1")
+    # parser.add_argument("file2")
+    # args = parser.parse_args()
+    # file1 = args.file1
+    # file2 = args.file2
 if __name__=='__main__':
     Main()
