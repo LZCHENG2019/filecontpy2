@@ -69,8 +69,7 @@ def compardirs(path1,path2,iteration=1):#对比文件夹内容
     path1_size = int(commands.getstatusoutput("du %s -s -k| awk '{print $1}'" % path1)[1])        #计算path1文件夹所占大小
     path2_size = int(commands.getstatusoutput("du %s -s -k| awk '{print $1}'" % path2)[1])
 
-    a = commands.getstatusoutput("diff -rqH %s %s 2>/dev/null | wc -l" %(path1,path2))[1]
-    path_diff = int(a)         #计算path1与path2里面各级文件差异的数量
+    path_diff = int(commands.getstatusoutput("diff -rqH %s %s 2>/dev/null | wc -l" %(path1,path2))[1])         #计算path1与path2里面各级文件内容差异的数量
     if abs(path1_size-path2_size) >= path_size_value:
         result =  False
         print ('文件大小差异%skb' %abs(path1_size-path2_size))
@@ -138,36 +137,30 @@ def comparelement(file1,file2):#对比文件
         if file_temp_typ == file_tested_typ:                #先判断文件类型，若相同则继续对比，若不同则直接退出对比
             size_temp = os.path.getsize(file1)    #/ 1048576      #filesize(file1)
             size_tested = os.path.getsize(file2)  #/ 1048576    #filesize(file2)
-            # size_diff = abs(size_temp-size_tested)
             if size_temp == size_tested:                    #先判断文件尺寸，若相同则对比MD5值
                 file1md5 = getMd5(file1)
                 file2md5 = getMd5(file2)
                 if file1md5 == file2md5:                    #两个文件大小、内容均无差异
                     result = True
                     return result
-                    # return result,filetp,filecont,filesize
                 else:                                       #两个文件大小相同，内容不同
                     # print ('文件大小差异为 %s bit' %abs(file1md5-file2md5))
                     file_temp_path = un_compress(file1)
                     file_tested_path = un_compress(file2)
-                    # os.system("\\rm *.tar*")
                     result = compardirs(file_temp_path,file_tested_path)
 
             else:   #允许文件大小有差异，但是若大于某一阈值，则输出错误
                 file_temp_path = un_compress(file1)
                 file_tested_path = un_compress(file2)
-                # os.system("\\rm *.tar*")
                 result = compardirs(file_temp_path, file_tested_path)
 
         else:                                               #两个文件类型不同不进行对比
-            # filetp = False
             result = False
-    # if os.path.isdir(file_temp_path) and os.path.isdir(file_tested_path):
-    #     os.system('\\rm -r %s %s' % (file_temp_path, file_tested_path))
+    if os.path.isdir(file_temp_path) and os.path.isdir(file_tested_path):
+        os.system('\\rm -r %s %s' % (file_temp_path, file_tested_path))
     return result
 def Main():
     file_tested = sys.argv[1]                           #运行python时传入参数
-    # filename = os.path.basename(File)
     class Networkerror(RuntimeError):
         def __init__(self, arg):
             self.args = arg
